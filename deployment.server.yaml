@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+  labels:
+    matchLabel: serverD
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      matchLabel: serverContainer
+  template:
+    metadata:
+      labels:
+        matchLabel: serverContainer
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: pvc-shared-files
+        - name: nginx-config-volume
+          configMap:
+            name: server-config
+      containers:
+        - name: server
+          image: nginx:1.7.9
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: shared-volume
+              subPath: site
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          ports:
+            - containerPort: 80

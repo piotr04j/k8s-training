@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment
+  labels:
+    matchLabel: phpD
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      matchLabel: phpContainer
+  template:
+    metadata:
+      labels:
+        matchLabel: phpContainer
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: pvc-shared-files
+      containers:
+        - name: php
+          image: app-php:1.0.2
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: shared-volume
+              subPath: site
+          ports:
+            - containerPort: 9000
+          lifecycle:
+            postStart:
+              exec:
+                command: [ "/bin/sh", "-c", "cp -r /app/. /var/www/html" ]
+
