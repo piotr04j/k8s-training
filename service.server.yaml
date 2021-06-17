@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-server
+  labels:
+    matchLabel: serverProd
+spec:
+  type: NodePort
+  ports:
+    - port: 3050
+      nodePort: 31515
+      targetPort: 80
+  selector:
+    matchLabel: serverContainer
