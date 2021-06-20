@@ -18,6 +18,9 @@ spec:
         - name: shared-volume
           persistentVolumeClaim:
             claimName: pvc-shared-files
+        - name: vol
+          hostPath:
+            path: /my-data
       containers:
         - name: php
           image: app-php:1.0.2
@@ -25,6 +28,8 @@ spec:
             - mountPath: /var/www/html
               name: shared-volume
               subPath: site
+            - name: vol
+              mountPath: /data
           ports:
             - containerPort: 9000
           lifecycle:
