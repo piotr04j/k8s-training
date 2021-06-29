@@ -1,0 +1,25 @@
+apiVersion: skaffold/v2beta17
+kind: Config
+metadata:
+  name: k-s-app
+build:
+  local:
+    push: false
+  artifacts:
+  - image: app-php
+    context: Docker/PHP
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - src: "./Docker/PHP/index.php"
+          dest: "/app"
+deploy:
+  kubectl:
+    manifests:
+    - deployment.php.yaml
+    - deployment.server.yaml
+    - peristent-volume-claim.page.yaml
+    - server.configmap.yaml
+    - service.php.yaml
+    - service.server.yaml
